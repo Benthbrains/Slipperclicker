@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Advanced Slippers Clicker</title>
-
 <style>
 /* ---------------------------
    Blue Paper-Like Theme
@@ -15,7 +14,6 @@ body {
     display: flex;
     height: 100vh;
 }
-
 /* Paper texture effect */
 #left {
     flex: 1;
@@ -27,7 +25,6 @@ body {
     justify-content: center;
     position: relative;
 }
-
 #slipper-btn {
     width: 220px;
     cursor: pointer;
@@ -36,20 +33,22 @@ body {
 #slipper-btn:active {
     transform: scale(0.9);
 }
-
 #counter {
     font-size: 42px;
     font-weight: bold;
     color: #0044aa;
     margin-top: 20px;
 }
-
 #sps {
     font-size: 20px;
     color: #3366cc;
     margin-top: 5px;
 }
-
+#souls {
+    font-size: 20px;
+    color: #ff8c00;
+    margin-top: 5px;
+}
 /* Floating number animation */
 .floating {
     position: absolute;
@@ -62,7 +61,6 @@ body {
     from { opacity: 1; transform: translateY(0); }
     to { opacity: 0; transform: translateY(-40px); }
 }
-
 /* Shop */
 #shop {
     width: 330px;
@@ -71,7 +69,6 @@ body {
     overflow-y: auto;
     border-left: 4px solid #b1c8ff;
 }
-
 .item {
     background: #ffffff;
     border: 2px solid #88aaff;
@@ -84,7 +81,6 @@ body {
 .item:hover {
     background: #f4f7ff;
 }
-
 /* Notifications */
 #notify {
     position: fixed;
@@ -99,7 +95,6 @@ body {
     opacity: 0;
     transition: opacity 0.4s;
 }
-
 /* Prestige Button */
 #prestige-btn {
     margin-top: 20px;
@@ -111,32 +106,26 @@ body {
     cursor: pointer;
     display: none;
 }
-
 </style>
 </head>
 <body>
-
 <!-- Left Zone -->
 <div id="left">
-    <img id="slipper-btn" src="https://i.imgur.com/8I8e5qI.png">
+    <img id="slipper-btn" src="https://www.shutterstock.com/image-vector/crystal-cinderella-slipper-vector-illustration-600nw-2255602115.jpg">
     <div id="counter">Slippers: 0</div>
     <div id="sps">Slippers per second: 0</div>
-
+    <div id="souls">Slipper Souls: 0</div>
     <button id="prestige-btn">Prestige Reset</button>
 </div>
-
 <!-- Right Shop -->
 <div id="shop">
     <h2>Shop</h2>
 </div>
-
 <!-- Notification Bubble -->
 <div id="notify"></div>
-
 <!-- Sound Effects -->
 <audio id="clickSound" src="https://audio-previews.elements.envatousercontent.com/files/103338709/preview.mp3"></audio>
 <audio id="buySound" src="https://audio-previews.elements.envatousercontent.com/files/103338705/preview.mp3"></audio>
-
 <script>
 /* ------------------------------
    MAIN GAME VARIABLES
@@ -144,45 +133,46 @@ body {
 let slippers = 0;
 let totalSPS = 0;
 let slipperSouls = 0;
-
 let lastOnline = Date.now();
-
 let items = [
-    { name: "Tiny Slipper",      base: 10,    cost: 10,    amount: 0, sps: 0.1 },
-    { name: "Slipper Maker",     base: 50,    cost: 50,    amount: 0, sps: 1 },
-    { name: "Slipper Factory",   base: 300,   cost: 300,   amount: 0, sps: 5 },
-    { name: "Mega Slipper Plant", base: 1200, cost: 1200,  amount: 0, sps: 20 },
-    { name: "AI Slipper Machine", base: 5000, cost: 5000,  amount: 0, sps: 80 }
+    { name: "Tiny Slipper", base: 10, cost: 10, amount: 0, sps: 0.1 },
+    { name: "Slipper Maker", base: 50, cost: 50, amount: 0, sps: 1 },
+    { name: "Slipper Factory", base: 300, cost: 300, amount: 0, sps: 5 },
+    { name: "Mega Slipper Plant", base: 1200, cost: 1200, amount: 0, sps: 20 },
+    { name: "AI Slipper Machine", base: 5000, cost: 5000, amount: 0, sps: 80 },
+    { name: "Slipper Lab", base: 20000, cost: 20000, amount: 0, sps: 300 },
+    { name: "Slipper Portal", base: 80000, cost: 80000, amount: 0, sps: 1000 },
+    { name: "Slipper Time Machine", base: 300000, cost: 300000, amount: 0, sps: 4000 },
+    { name: "Antimatter Slipper", base: 1000000, cost: 1000000, amount: 0, sps: 14000 },
+    { name: "Slipper Prism", base: 4000000, cost: 4000000, amount: 0, sps: 50000 },
+    { name: "Slipper Chancemaker", base: 15000000, cost: 15000000, amount: 0, sps: 200000 },
+    { name: "Fractal Slipper", base: 50000000, cost: 50000000, amount: 0, sps: 700000 }
 ];
-
 const shop = document.getElementById("shop");
 const slipperBtn = document.getElementById("slipper-btn");
 const counter = document.getElementById("counter");
 const spsDisplay = document.getElementById("sps");
+const soulsDisplay = document.getElementById("souls");
 const notifyBox = document.getElementById("notify");
 const prestigeBtn = document.getElementById("prestige-btn");
-
 /* ------------------------------
    FLOATING CLICK + SOUND
 --------------------------------*/
 slipperBtn.addEventListener("click", function(event) {
-    slippers += 1 + slipperSouls * 0.5;
-
+    const bonus = 1 + slipperSouls * 0.01;
+    slippers += bonus;
     // Sound
     document.getElementById("clickSound").play();
-
     // Floating +1 animation
     const float = document.createElement("div");
     float.className = "floating";
-    float.textContent = "+1";
+    float.textContent = "+" + Math.floor(bonus);
     float.style.left = (event.clientX - 10) + "px";
     float.style.top = (event.clientY - 20) + "px";
     document.body.appendChild(float);
-
     setTimeout(() => float.remove(), 1000);
     updateDisplay();
 });
-
 /* ------------------------------
    SHOP GENERATION
 --------------------------------*/
@@ -192,19 +182,16 @@ function createShop() {
         div.className = "item";
         div.id = "item-" + i;
         div.onclick = () => buyItem(i);
-
         div.innerHTML = `
             <div><b>${item.name}</b></div>
             <div>Cost: ${item.cost}</div>
             <div>Owned: ${item.amount}</div>
             <div>SPS: ${item.sps}</div>
         `;
-
         shop.appendChild(div);
     });
 }
 createShop();
-
 function refreshShop() {
     items.forEach((item, i) => {
         const div = document.getElementById("item-" + i);
@@ -216,33 +203,26 @@ function refreshShop() {
         `;
     });
 }
-
 /* ------------------------------
    BUY ITEM
 --------------------------------*/
 function buyItem(i) {
     const item = items[i];
-
     if (slippers >= item.cost) {
         slippers -= item.cost;
         item.amount++;
         totalSPS += item.sps;
-
         // Play purchase sound
         document.getElementById("buySound").play();
-
         // Cost scaling
         item.cost = Math.floor(item.base * Math.pow(1.15, item.amount));
-
         notify("Bought " + item.name + "!");
-
         refreshShop();
         updateDisplay();
     } else {
         notify("Not enough slippers!");
     }
 }
-
 /* ------------------------------
    PRESTIGE SYSTEM
 --------------------------------*/
@@ -251,45 +231,37 @@ function checkPrestige() {
         prestigeBtn.style.display = "block";
     }
 }
-
 prestigeBtn.addEventListener("click", () => {
-    let soulsGained = Math.floor(Math.sqrt(slippers / 10000));
+    let soulsGained = Math.floor(Math.sqrt(slippers / 1000000));
     if (soulsGained < 1) return;
-
     slipperSouls += soulsGained;
-
     notify("Prestiged! You gained " + soulsGained + " Slipper Souls!");
-
     // Reset everything
     slippers = 0;
     totalSPS = 0;
     items.forEach(i => { i.amount = 0; i.cost = i.base; });
-
     refreshShop();
     updateDisplay();
 });
-
 /* ------------------------------
    POPUP NOTIFICATION
 --------------------------------*/
 function notify(msg) {
     notifyBox.textContent = msg;
     notifyBox.style.opacity = 1;
-
     setTimeout(() => {
         notifyBox.style.opacity = 0;
     }, 1500);
 }
-
 /* ------------------------------
    PASSIVE INCOME / GAME LOOP
 --------------------------------*/
 setInterval(() => {
-    slippers += totalSPS / 10;
+    const bonus = 1 + slipperSouls * 0.01;
+    slippers += (totalSPS * bonus) / 10;
     updateDisplay();
     checkPrestige();
 }, 100);
-
 /* ------------------------------
    OFFLINE EARNINGS
 --------------------------------*/
@@ -297,15 +269,12 @@ function handleOfflineEarnings() {
     const now = Date.now();
     const diff = now - lastOnline;
     const seconds = diff / 1000;
-
-    const earned = seconds * totalSPS;
+    const bonus = 1 + slipperSouls * 0.01;
+    const earned = seconds * totalSPS * bonus;
     slippers += earned;
-
     notify("You earned " + Math.floor(earned) + " slippers while offline!");
-
     updateDisplay();
 }
-
 /* ------------------------------
    SAVE / LOAD
 --------------------------------*/
@@ -316,7 +285,6 @@ function saveGame() {
     localStorage.setItem("items", JSON.stringify(items));
     localStorage.setItem("time", Date.now());
 }
-
 function loadGame() {
     if (localStorage.getItem("slippers")) {
         slippers = Number(localStorage.getItem("slippers"));
@@ -324,26 +292,23 @@ function loadGame() {
         slipperSouls = Number(localStorage.getItem("souls"));
         items = JSON.parse(localStorage.getItem("items"));
         lastOnline = Number(localStorage.getItem("time"));
-
         refreshShop();
         updateDisplay();
         handleOfflineEarnings();
     }
 }
-
 // Auto-save every 5 seconds
 setInterval(saveGame, 5000);
-
 window.onload = loadGame;
-
 /* ------------------------------
    UPDATE DISPLAY
 --------------------------------*/
 function updateDisplay() {
+    const bonus = 1 + slipperSouls * 0.01;
     counter.textContent = "Slippers: " + Math.floor(slippers);
-    spsDisplay.textContent = "Slippers per second: " + totalSPS.toFixed(1);
+    spsDisplay.textContent = "Slippers per second: " + (totalSPS * bonus).toFixed(1);
+    soulsDisplay.textContent = "Slipper Souls: " + slipperSouls;
 }
-
 </script>
 </body>
 </html>
