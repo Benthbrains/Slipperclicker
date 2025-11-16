@@ -3,123 +3,189 @@
 <head>
 <meta charset="UTF-8">
 <title>Advanced Slippers Clicker</title>
+<link href="https://fonts.googleapis.com/css2?family=Reenie+Beanie&display=swap" rel="stylesheet">
 <style>
 /* ---------------------------
-   Blue Paper-Like Theme
+   Enhanced Blue Theme Inspired by Cookie Clicker
 ----------------------------*/
 body {
     margin: 0;
     font-family: "Trebuchet MS", sans-serif;
-    background: #dce9ff;
+    background: linear-gradient(#a0c4ff, #3b6eaa); /* Blue gradient */
     display: flex;
+    flex-direction: column;
     height: 100vh;
+    color: #fff;
 }
-/* Paper texture effect */
+#top {
+    background: #8b4513; /* Wood brown */
+    padding: 10px;
+    text-align: center;
+    border-bottom: 4px solid #654321;
+}
+#top h1 {
+    font-family: 'Reenie Beanie', cursive;
+    font-size: 48px;
+    margin: 0;
+    color: #ffd700; /* Gold */
+}
+#news {
+    font-size: 18px;
+    background: #000;
+    color: #fff;
+    padding: 5px;
+    margin-top: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+#main {
+    flex: 1;
+    display: flex;
+}
+/* Left Zone */
 #left {
     flex: 1;
-    background: #f7fbff;
-    border-right: 4px solid #b1c8ff;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
+    background: radial-gradient(circle, #72a0c1, #3b6eaa);
+    border-right: 4px solid #654321;
 }
 #slipper-btn {
-    width: 220px;
+    width: 250px;
     cursor: pointer;
-    transition: transform 0.07s ease;
+    transition: transform 0.07s ease, filter 0.2s;
+    filter: drop-shadow(0 0 10px #ffd700);
+}
+#slipper-btn:hover {
+    filter: drop-shadow(0 0 20px #ffd700);
 }
 #slipper-btn:active {
-    transform: scale(0.9);
+    transform: scale(0.95);
 }
 #counter {
     font-size: 42px;
     font-weight: bold;
-    color: #0044aa;
+    color: #ffd700;
     margin-top: 20px;
+    text-shadow: 2px 2px 4px #000;
 }
 #sps {
     font-size: 20px;
-    color: #3366cc;
+    color: #fff;
     margin-top: 5px;
+    text-shadow: 1px 1px 2px #000;
 }
 #souls {
     font-size: 20px;
     color: #ff8c00;
     margin-top: 5px;
+    text-shadow: 1px 1px 2px #000;
 }
 /* Floating number animation */
 .floating {
     position: absolute;
-    font-size: 24px;
-    color: #0088ff;
-    animation: floatUp 1s ease-out forwards;
+    font-size: 28px;
+    color: #ffd700;
+    text-shadow: 1px 1px 2px #000;
+    animation: floatUp 1.2s ease-out forwards;
     pointer-events: none;
 }
 @keyframes floatUp {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(-40px); }
+    from { opacity: 1; transform: translateY(0) rotate(0deg); }
+    to { opacity: 0; transform: translateY(-60px) rotate(15deg); }
 }
 /* Shop */
 #shop {
-    width: 330px;
-    background: #eaf1ff;
+    width: 400px;
+    background: #a0c4ff;
     padding: 20px;
     overflow-y: auto;
-    border-left: 4px solid #b1c8ff;
+    border-left: 4px solid #654321;
+    color: #000;
 }
 .item {
-    background: #ffffff;
-    border: 2px solid #88aaff;
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 12px;
+    background: #fff;
+    border: 3px solid #88aaff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 .item:hover {
-    background: #f4f7ff;
+    background: #f0f8ff;
+    transform: scale(1.02);
+}
+.item .icon {
+    font-size: 40px;
+    margin-right: 15px;
+}
+.item div {
+    flex: 1;
 }
 /* Notifications */
 #notify {
     position: fixed;
-    top: 10px;
+    top: 80px;
     left: 50%;
     transform: translateX(-50%);
-    background: #3377ff;
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size: 18px;
+    background: #ffd700;
+    color: #000;
+    padding: 15px 25px;
+    border-radius: 15px;
+    font-size: 20px;
     opacity: 0;
-    transition: opacity 0.4s;
+    transition: opacity 0.5s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 /* Prestige Button */
 #prestige-btn {
     margin-top: 20px;
     padding: 12px 20px;
-    background: gold;
+    background: #ffd700;
     border: 3px solid #aa8800;
     border-radius: 10px;
     font-size: 20px;
     cursor: pointer;
-    display: none;
+    color: #000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+}
+#prestige-btn:hover {
+    transform: scale(1.05);
+}
+#prestige-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
 }
 </style>
 </head>
 <body>
-<!-- Left Zone -->
-<div id="left">
-    <img id="slipper-btn" src="https://www.shutterstock.com/image-vector/crystal-cinderella-slipper-vector-illustration-600nw-2255602115.jpg">
-    <div id="counter">Slippers: 0</div>
-    <div id="sps">Slippers per second: 0</div>
-    <div id="souls">Slipper Souls: 0</div>
-    <button id="prestige-btn">Prestige Reset</button>
+<!-- Top Header -->
+<div id="top">
+    <h1>Slipper Clicker</h1>
+    <div id="news">Welcome to Slipper Clicker!</div>
 </div>
-<!-- Right Shop -->
-<div id="shop">
-    <h2>Shop</h2>
+<!-- Main Content -->
+<div id="main">
+    <!-- Left Zone -->
+    <div id="left">
+        <img id="slipper-btn" src="https://www.shutterstock.com/image-vector/crystal-cinderella-slipper-vector-illustration-600nw-2255602115.jpg">
+        <div id="counter">Slippers: 0</div>
+        <div id="sps">Slippers per second: 0</div>
+        <div id="souls">Slipper Souls: 0</div>
+        <button id="prestige-btn">Prestige Reset (+0 Souls)</button>
+    </div>
+    <!-- Right Shop -->
+    <div id="shop">
+        <h2>Store</h2>
+    </div>
 </div>
 <!-- Notification Bubble -->
 <div id="notify"></div>
@@ -135,18 +201,28 @@ let totalSPS = 0;
 let slipperSouls = 0;
 let lastOnline = Date.now();
 let items = [
-    { name: "Tiny Slipper", base: 10, cost: 10, amount: 0, sps: 0.1 },
-    { name: "Slipper Maker", base: 50, cost: 50, amount: 0, sps: 1 },
-    { name: "Slipper Factory", base: 300, cost: 300, amount: 0, sps: 5 },
-    { name: "Mega Slipper Plant", base: 1200, cost: 1200, amount: 0, sps: 20 },
-    { name: "AI Slipper Machine", base: 5000, cost: 5000, amount: 0, sps: 80 },
-    { name: "Slipper Lab", base: 20000, cost: 20000, amount: 0, sps: 300 },
-    { name: "Slipper Portal", base: 80000, cost: 80000, amount: 0, sps: 1000 },
-    { name: "Slipper Time Machine", base: 300000, cost: 300000, amount: 0, sps: 4000 },
-    { name: "Antimatter Slipper", base: 1000000, cost: 1000000, amount: 0, sps: 14000 },
-    { name: "Slipper Prism", base: 4000000, cost: 4000000, amount: 0, sps: 50000 },
-    { name: "Slipper Chancemaker", base: 15000000, cost: 15000000, amount: 0, sps: 200000 },
-    { name: "Fractal Slipper", base: 50000000, cost: 50000000, amount: 0, sps: 700000 }
+    { name: "Tiny Slipper", icon: "🩴", base: 10, cost: 10, amount: 0, sps: 0.1 },
+    { name: "Slipper Maker", icon: "👩‍🏭", base: 50, cost: 50, amount: 0, sps: 1 },
+    { name: "Slipper Factory", icon: "🏭", base: 300, cost: 300, amount: 0, sps: 5 },
+    { name: "Mega Slipper Plant", icon: "🏢", base: 1200, cost: 1200, amount: 0, sps: 20 },
+    { name: "AI Slipper Machine", icon: "🤖", base: 5000, cost: 5000, amount: 0, sps: 80 },
+    { name: "Slipper Lab", icon: "🧪", base: 20000, cost: 20000, amount: 0, sps: 300 },
+    { name: "Slipper Portal", icon: "🌀", base: 80000, cost: 80000, amount: 0, sps: 1000 },
+    { name: "Slipper Time Machine", icon: "⏰", base: 300000, cost: 300000, amount: 0, sps: 4000 },
+    { name: "Antimatter Slipper", icon: "⚛️", base: 1000000, cost: 1000000, amount: 0, sps: 14000 },
+    { name: "Slipper Prism", icon: "🔺", base: 4000000, cost: 4000000, amount: 0, sps: 50000 },
+    { name: "Slipper Chancemaker", icon: "🎲", base: 15000000, cost: 15000000, amount: 0, sps: 200000 },
+    { name: "Fractal Slipper", icon: "🌀", base: 50000000, cost: 50000000, amount: 0, sps: 700000 }
+];
+const newsMessages = [
+    "Slipper production is booming!",
+    "New slipper designs released!",
+    "Slipper souls whisper secrets...",
+    "A wild slipper appears!",
+    "Economy in slippers rising!",
+    "Beware of slipper thieves!",
+    "Slipper clickers unite!",
+    "Prestige for ultimate power!"
 ];
 const shop = document.getElementById("shop");
 const slipperBtn = document.getElementById("slipper-btn");
@@ -155,22 +231,27 @@ const spsDisplay = document.getElementById("sps");
 const soulsDisplay = document.getElementById("souls");
 const notifyBox = document.getElementById("notify");
 const prestigeBtn = document.getElementById("prestige-btn");
+const newsEl = document.getElementById("news");
+/* ------------------------------
+   NEWS TICKER
+--------------------------------*/
+setInterval(() => {
+    newsEl.textContent = newsMessages[Math.floor(Math.random() * newsMessages.length)];
+}, 10000);
 /* ------------------------------
    FLOATING CLICK + SOUND
 --------------------------------*/
 slipperBtn.addEventListener("click", function(event) {
     const bonus = 1 + slipperSouls * 0.01;
     slippers += bonus;
-    // Sound
     document.getElementById("clickSound").play();
-    // Floating +1 animation
     const float = document.createElement("div");
     float.className = "floating";
     float.textContent = "+" + Math.floor(bonus);
-    float.style.left = (event.clientX - 10) + "px";
-    float.style.top = (event.clientY - 20) + "px";
+    float.style.left = (event.clientX - 20) + "px";
+    float.style.top = (event.clientY - 30) + "px";
     document.body.appendChild(float);
-    setTimeout(() => float.remove(), 1000);
+    setTimeout(() => float.remove(), 1200);
     updateDisplay();
 });
 /* ------------------------------
@@ -183,10 +264,13 @@ function createShop() {
         div.id = "item-" + i;
         div.onclick = () => buyItem(i);
         div.innerHTML = `
-            <div><b>${item.name}</b></div>
-            <div>Cost: ${item.cost}</div>
-            <div>Owned: ${item.amount}</div>
-            <div>SPS: ${item.sps}</div>
+            <span class="icon">${item.icon}</span>
+            <div>
+                <b>${item.name}</b><br>
+                Cost: ${Math.floor(item.cost)}<br>
+                Owned: ${item.amount}<br>
+                SPS: ${item.sps}
+            </div>
         `;
         shop.appendChild(div);
     });
@@ -196,11 +280,19 @@ function refreshShop() {
     items.forEach((item, i) => {
         const div = document.getElementById("item-" + i);
         div.innerHTML = `
-            <div><b>${item.name}</b></div>
-            <div>Cost: ${item.cost}</div>
-            <div>Owned: ${item.amount}</div>
-            <div>SPS: ${item.sps}</div>
+            <span class="icon">${item.icon}</span>
+            <div>
+                <b>${item.name}</b><br>
+                Cost: ${Math.floor(item.cost)}<br>
+                Owned: ${item.amount}<br>
+                SPS: ${item.sps}
+            </div>
         `;
+        if (slippers >= item.cost) {
+            div.style.borderColor = "#ffd700";
+        } else {
+            div.style.borderColor = "#88aaff";
+        }
     });
 }
 /* ------------------------------
@@ -212,9 +304,7 @@ function buyItem(i) {
         slippers -= item.cost;
         item.amount++;
         totalSPS += item.sps;
-        // Play purchase sound
         document.getElementById("buySound").play();
-        // Cost scaling
         item.cost = Math.floor(item.base * Math.pow(1.15, item.amount));
         notify("Bought " + item.name + "!");
         refreshShop();
@@ -226,17 +316,14 @@ function buyItem(i) {
 /* ------------------------------
    PRESTIGE SYSTEM
 --------------------------------*/
-function checkPrestige() {
-    if (slippers >= 100000) {
-        prestigeBtn.style.display = "block";
-    }
-}
 prestigeBtn.addEventListener("click", () => {
     let soulsGained = Math.floor(Math.sqrt(slippers / 1000000));
-    if (soulsGained < 1) return;
+    if (soulsGained < 1) {
+        notify("Not enough slippers to prestige!");
+        return;
+    }
     slipperSouls += soulsGained;
-    notify("Prestiged! You gained " + soulsGained + " Slipper Souls!");
-    // Reset everything
+    notify("Prestiged! Gained " + soulsGained + " Slipper Souls!");
     slippers = 0;
     totalSPS = 0;
     items.forEach(i => { i.amount = 0; i.cost = i.base; });
@@ -251,7 +338,7 @@ function notify(msg) {
     notifyBox.style.opacity = 1;
     setTimeout(() => {
         notifyBox.style.opacity = 0;
-    }, 1500);
+    }, 2000);
 }
 /* ------------------------------
    PASSIVE INCOME / GAME LOOP
@@ -260,7 +347,6 @@ setInterval(() => {
     const bonus = 1 + slipperSouls * 0.01;
     slippers += (totalSPS * bonus) / 10;
     updateDisplay();
-    checkPrestige();
 }, 100);
 /* ------------------------------
    OFFLINE EARNINGS
@@ -272,7 +358,7 @@ function handleOfflineEarnings() {
     const bonus = 1 + slipperSouls * 0.01;
     const earned = seconds * totalSPS * bonus;
     slippers += earned;
-    notify("You earned " + Math.floor(earned) + " slippers while offline!");
+    notify("Offline earnings: " + Math.floor(earned) + " slippers!");
     updateDisplay();
 }
 /* ------------------------------
@@ -308,6 +394,10 @@ function updateDisplay() {
     counter.textContent = "Slippers: " + Math.floor(slippers);
     spsDisplay.textContent = "Slippers per second: " + (totalSPS * bonus).toFixed(1);
     soulsDisplay.textContent = "Slipper Souls: " + slipperSouls;
+    const soulsGained = Math.floor(Math.sqrt(slippers / 1000000));
+    prestigeBtn.textContent = "Prestige Reset (+" + soulsGained + " Souls)";
+    prestigeBtn.disabled = soulsGained < 1;
+    refreshShop();
 }
 </script>
 </body>
