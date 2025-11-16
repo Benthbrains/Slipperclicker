@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced Slippers Clicker</title>
+
+<style>
+/* ---------------------------
+   Blue Paper-Like Theme
+----------------------------*/
+body {
+    margin: 0;
+    font-family: "Trebuchet MS", sans-serif;
+    background: #dce9ff;
+    display: flex;
+    height: 100vh;
+}
+
+/* Paper texture effect */
+#left {
+    flex: 1;
+    background: #f7fbff;
+    border-right: 4px solid #b1c8ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#slipper-btn {
+    width: 220px;
+    cursor: pointer;
+    transition: transform 0.07s ease;
+}
+#slipper-btn:active {
+    transform: scale(0.9);
+}
+
+#counter {
+    font-size: 42px;
+    font-weight: bold;
+    color: #0044aa;
+    margin-top: 20px;
+}
+
+#sps {
+    font-size: 20px;
+    color: #3366cc;
+    margin-top: 5px;
+}
+
+/* Floating number animation */
+.floating {
+    position: absolute;
+    font-size: 24px;
+    color: #0088ff;
+    animation: floatUp 1s ease-out forwards;
+    pointer-events: none;
+}
+@keyframes floatUp {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-40px); }
+}
+
+/* Shop */
+#shop {
+    width: 330px;
+    background: #eaf1ff;
+    padding: 20px;
+    overflow-y: auto;
+    border-left: 4px solid #b1c8ff;
+}
+
+.item {
+    background: #ffffff;
+    border: 2px solid #88aaff;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.item:hover {
+    background: #f4f7ff;
+}
+
+/* Notifications */
+#notify {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #3377ff;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 18px;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+/* Prestige Button */
+#prestige-btn {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: gold;
+    border: 3px solid #aa8800;
+    border-radius: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Left Zone -->
+<div id="left">
+    <img id="slipper-btn" src="https://i.imgur.com/8I8e5qI.png">
+    <div id="counter">Slippers: 0</div>
+    <div id="sps">Slippers per second: 0</div>
+
+    <button id="prestige-btn">Prestige Reset</button>
+</div>
+
+<!-- Right Shop -->
+<div id="shop">
+    <h2>Shop</h2>
+</div>
+
+<!-- Notification Bubble -->
+<div id="notify"></div>
+
+<!-- Sound Effects -->
+<audio id="clickSound" src="https://audio-previews.elements.envatousercontent.com/files/103338709/preview.mp3"></audio>
+<audio id="buySound" src="https://audio-previews.elements.envatousercontent.com/files/103338705/preview.mp3"></audio>
+
+<script>
+/* ------------------------------
+   MAIN GAME VARIABLES
+--------------------------------*/
+let slippers = 0;
+let totalSPS = 0;
+let slipperSouls = 0;
+
+let lastOnline = Date.now();
+
+let items = [
+    { name: "Tiny Slipper",      base: 10,    cost: 10,    amount: 0, sps: 0.1 },
+    { name: "Slipper Maker",     base: 50,    cost: 50,    amount: 0, sps: 1 },
+    { name: "Slipper Factory",   base: 300,   cost: 300,   amount: 0, sps: 5 },
+    { name: "Mega Slipper Plant", base: 1200, cost: 1200,  amount: 0, sps: 20 },
+    { name: "AI Slipper Machine", base: 5000, cost: 5000,  amount: 0, sps: 80 }
+];
+
+const shop = document.getElementById("shop");
+const slipperBtn = document.getElementById("slipper-btn");
+const counter = document.getElementById("counter");
+const spsDisplay = document.getElementById("sps");
+const notifyBox = document.getElementById("notify");
+const prestigeBtn = document.getElementById("prestige-btn");
+
+/* ------------------------------
+   FLOATING CLICK + SOUND
+--------------------------------*/
+slipperBtn.addEventListener("click", function(event) {
+    slippers += 1 + slipperSouls * 0.5;
+
+    // Sound
+    document.getElementById("clickSound").play();
+
+    // Floating +1 animation
+    const float = document.createElement("div");
+    float.className = "floating";
+    float.textContent = "+1";
+    float.style.left = (event.clientX - 10) + "px";
+    float.style.top = (event.clientY - 20) + "px";
+    document.body.appendChild(float);
+
+    setTimeout(() => float.remove(), 1000);
+    updateDisplay();
+});
+
+/* ------------------------------
+   SHOP GENERATION
+--------------------------------*/
+function createShop() {
+    items.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.id = "item-" + i;
+        div.onclick = () => buyItem(i);
+
+        div.innerHTML = `
+            <div><b>${item.name}</b></div>
+            <div>Cost: ${item.cost}</div>
+            <div>Owned: ${item.amount}</div>
+            <div>SPS: ${item.sps}</div>
+        `;
+
+        shop.appendChild(div);
+    });
+}
+createShop();
+
+function refreshShop() {
+    items.forEach((item, i) => {
+        const div = document.getElementById("item-" + i);
+        div.innerHTML = `
+            <div><b>${item.name}</b></div>
+            <div>Cost: ${item.cost}</div>
+            <div>Owned: ${item.amount}</div>
+            <div>SPS: ${item.sps}</div>
+        `;
+    });
+}
+
+/* ------------------------------
+   BUY ITEM
+--------------------------------*/
+function buyItem(i) {
+    const item = items[i];
+
+    if (slippers >= item.cost) {
+        slippers -= item.cost;
+        item.amount++;
+        totalSPS += item.sps;
+
+        // Play purchase sound
+        document.getElementById("buySound").play();
+
+        // Cost scaling
+        item.cost = Math.floor(item.base * Math.pow(1.15, item.amount));
+
+        notify("Bought " + item.name + "!");
+
+        refreshShop();
+        updateDisplay();
+    } else {
+        notify("Not enough slippers!");
+    }
+}
+
+/* ------------------------------
+   PRESTIGE SYSTEM
+--------------------------------*/
+function checkPrestige() {
+    if (slippers >= 100000) {
+        prestigeBtn.style.display = "block";
+    }
+}
+
+prestigeBtn.addEventListener("click", () => {
+    let soulsGained = Math.floor(Math.sqrt(slippers / 10000));
+    if (soulsGained < 1) return;
+
+    slipperSouls += soulsGained;
+
+    notify("Prestiged! You gained " + soulsGained + " Slipper Souls!");
+
+    // Reset everything
+    slippers = 0;
+    totalSPS = 0;
+    items.forEach(i => { i.amount = 0; i.cost = i.base; });
+
+    refreshShop();
+    updateDisplay();
+});
+
+/* ------------------------------
+   POPUP NOTIFICATION
+--------------------------------*/
+function notify(msg) {
+    notifyBox.textContent = msg;
+    notifyBox.style.opacity = 1;
+
+    setTimeout(() => {
+        notifyBox.style.opacity = 0;
+    }, 1500);
+}
+
+/* ------------------------------
+   PASSIVE INCOME / GAME LOOP
+--------------------------------*/
+setInterval(() => {
+    slippers += totalSPS / 10;
+    updateDisplay();
+    checkPrestige();
+}, 100);
+
+/* ------------------------------
+   OFFLINE EARNINGS
+--------------------------------*/
+function handleOfflineEarnings() {
+    const now = Date.now();
+    const diff = now - lastOnline;
+    const seconds = diff / 1000;
+
+    const earned = seconds * totalSPS;
+    slippers += earned;
+
+    notify("You earned " + Math.floor(earned) + " slippers while offline!");
+
+    updateDisplay();
+}
+
+/* ------------------------------
+   SAVE / LOAD
+--------------------------------*/
+function saveGame() {
+    localStorage.setItem("slippers", slippers);
+    localStorage.setItem("sps", totalSPS);
+    localStorage.setItem("souls", slipperSouls);
+    localStorage.setItem("items", JSON.stringify(items));
+    localStorage.setItem("time", Date.now());
+}
+
+function loadGame() {
+    if (localStorage.getItem("slippers")) {
+        slippers = Number(localStorage.getItem("slippers"));
+        totalSPS = Number(localStorage.getItem("sps"));
+        slipperSouls = Number(localStorage.getItem("souls"));
+        items = JSON.parse(localStorage.getItem("items"));
+        lastOnline = Number(localStorage.getItem("time"));
+
+        refreshShop();
+        updateDisplay();
+        handleOfflineEarnings();
+    }
+}
+
+// Auto-save every 5 seconds
+setInterval(saveGame, 5000);
+
+window.onload = loadGame;
+
+/* ------------------------------
+   UPDATE DISPLAY
+--------------------------------*/
+function updateDisplay() {
+    counter.textContent = "Slippers: " + Math.floor(slippers);
+    spsDisplay.textContent = "Slippers per second: " + totalSPS.toFixed(1);
+}
+
+</script>
+</body>
+</html>
